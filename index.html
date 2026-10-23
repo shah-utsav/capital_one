@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capital Kinnect — Family Goals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@420;500;600;700&family=Source+Sans+3:ital,wght@0,400;0,550;0,650;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1b1714;
+    --muted: #5e574e;
+    --line: #ddd4c8;
+    --paper: #efe8de;
+    --paper-2: #f7f3ec;
+    --red: #d0121e;
+    --red-dark: #8e1520;
+    --navy: #10182e;
+    --navy-2: #171f38;
+    --card: #1c243f;
+    --card-line: rgba(255, 255, 255, 0.08);
+    --blue: #3b82f6;
+    --blue-2: #60a5fa;
+    --soft: #9aa6c3;
+    --chip: #243056;
+    --ok: #1f7a4d;
+    --warn: #8a5a12;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(900px 420px at 12% -10%, rgba(208, 18, 30, 0.08), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  h1, h2, h3, h4 { font-family: Outfit, "Avenir Next", sans-serif; margin: 0; font-weight: 600; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 28px 64px;
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 22px;
+  }
+  .brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--red);
+    position: relative;
+    flex: none;
+  }
+  .logo::before, .logo::after {
+    content: "";
+    position: absolute;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    top: 11px;
+    width: 12px;
+    height: 12px;
+  }
+  .logo::before { left: 7px; }
+  .logo::after { left: 16px; }
+  .brand h1 { font-size: 26px; letter-spacing: -0.03em; }
+  .brand h1 span { color: var(--red); }
+  .brand p { margin: 2px 0 0; color: var(--muted); font-size: 15px; }
+  .meta { text-align: right; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+  .meta strong { display: block; color: var(--ink); font-weight: 650; font-size: 14px; }
+
+  .stage {
+    display: grid;
+    grid-template-columns: 400px minmax(0, 1fr);
+    gap: 34px;
+    align-items: start;
+  }
+
+  .phone-col { position: sticky; top: 16px; }
+  .hint {
+    margin: 12px 8px 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .phone {
+    width: 380px;
+    height: min(780px, calc(100dvh - 108px));
+    min-height: 640px;
+    background: #05060a;
+    border-radius: 44px;
+    padding: 10px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.14) inset,
+      0 24px 60px rgba(40, 24, 16, 0.28);
+  }
+  .screen {
+    height: 100%;
+    background: var(--navy);
+    border-radius: 34px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    color: #f4f7fb;
+  }
+  .statusbar {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 22px 0;
+    font-family: Outfit, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    flex: none;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: #fff; }
+  .battery {
+    width: 23px; height: 11px; border: 1.5px solid #fff; border-radius: 3px; position: relative;
+  }
+  .battery::after {
+    content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 4px; background: #fff; border-radius: 0 1px 1px 0;
+  }
+  .battery i { display: block; height: 100%; width: 76%; background: #fff; }
+
+  .views { flex: 1; min-height: 0; position: relative; }
+  .view { display: none; height: 100%; flex-direction: column; }
+  .view.on { display: flex; }
+  .scroll { flex: 1; overflow: auto; min-height: 0; padding-bottom: 8px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  .appbar {
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    align-items: center;
+    padding: 6px 12px 10px;
+    flex: none;
+  }
+  .appbar h2 { text-align: center; font-size: 17px; font-weight: 600; }
+  .textbtn {
+    background: none; border: 0; color: var(--blue-2); font-size: 16px; font-weight: 600; padding: 6px;
+  }
+  .textbtn:focus-visible, .info:focus-visible, .primary:focus-visible, .seg button:focus-visible, .role button:focus-visible {
+    outline: 2px solid #fff; outline-offset: 2px;
+  }
+
+  .home-head { padding: 4px 18px 12px; }
+  .kicker { color: var(--soft); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .home-head h2 { font-size: 28px; letter-spacing: -0.03em; margin-top: 2px; }
+  .role {
+    display: flex; background: #0c1224; border-radius: 999px; padding: 3px; margin: 14px 18px 4px;
+    border: 1px solid var(--card-line);
+  }
+  .role button {
+    flex: 1; border: 0; background: transparent; color: var(--soft); border-radius: 999px;
+    padding: 8px 8px; font-size: 13.5px; font-weight: 650;
+  }
+  .role button.on { background: #243056; color: white; }
+
+  .cc {
+    margin: 8px 18px 6px;
+    border-radius: 18px;
+    padding: 14px 16px 12px;
+    background:
+      radial-gradient(120px 80px at 90% 0%, rgba(255,255,255,0.16), transparent 60%),
+      linear-gradient(145deg, #c01922 0%, #6d1220 48%, #1a2748 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .cc-top, .cc-foot { display: flex; justify-content: space-between; font-size: 12.5px; letter-spacing: 0.04em; }
+  .cc-top { font-family: Outfit, sans-serif; font-weight: 600; text-transform: uppercase; }
+  .chip {
+    width: 28px; height: 20px; border-radius: 4px; margin: 10px 0 8px;
+    background: linear-gradient(135deg, #f0d48a, #b8893a);
+  }
+  .cc-num { font-family: Outfit, sans-serif; letter-spacing: 0.14em; font-size: 16px; }
+  .cc-foot { margin-top: 12px; opacity: 0.92; }
+
+  .panel {
+    margin: 6px 18px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    border-radius: 16px;
+    padding: 12px 14px;
+  }
+  .panel h3 { font-size: 15px; }
+  .sub { color: var(--soft); font-size: 13.5px; margin: 4px 0 10px; line-height: 1.35; }
+  .spend { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: #0c1224; }
+  .spend span:nth-child(1) { width: 38.3%; background: #60a5fa; }
+  .spend span:nth-child(2) { width: 55.1%; background: #f0b429; }
+  .spend span:nth-child(3) { width: 5.1%; background: #34d399; }
+  .spend span:nth-child(4) { width: 1.5%; background: #f472b6; }
+  .who { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 10px; }
+  .who i { font-style: normal; color: var(--soft); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .screen[data-role="teen"] .adult-only { display: none !important; }
+  .screen[data-role="adult"] .teen-only { display: none !important; }
+
+  .teen-balance { font-family: Outfit, sans-serif; font-size: 32px; letter-spacing: -0.04em; margin: 6px 0 2px; }
+  .teen-balance small { font-size: 15px; color: var(--soft); font-weight: 500; }
+
+  .goal-mini { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .goal-mini .row { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+  .goal-mini .row b { font-weight: 650; }
+  .track { height: 6px; background: #0c1224; border-radius: 99px; margin-top: 6px; overflow: hidden; }
+  .track i { display: block; height: 100%; background: var(--blue); border-radius: 99px; }
+  .fresh { color: #86efac; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .lesson {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .lesson .mark {
+    width: 40px; height: 40px; border-radius: 12px; background: #243056; color: var(--blue-2);
+    display: grid; place-items: center; flex: none; font-family: Outfit, sans-serif; font-weight: 700;
+  }
+  .lesson p { margin: 2px 0 0; color: var(--soft); font-size: 13.5px; }
+
+  .footer {
+    flex: none;
+    padding: 8px 16px 16px;
+  }
+  .primary {
+    width: 100%;
+    border: 0;
+    background: var(--blue);
+    color: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 17px;
+    font-weight: 700;
+    font-family: Outfit, sans-serif;
+  }
+  .primary:disabled { opacity: 0.4; cursor: default; }
+  .primary.red { background: var(--red); }
+  .homebar {
+    width: 128px; height: 5px; border-radius: 99px; background: rgba(255,255,255,0.85); margin: 10px auto 0;
+  }
+
+  .seg-wrap { padding: 0 16px 8px; }
+  .seg {
+    display: flex; background: #0c1224; border-radius: 12px; padding: 3px; border: 1px solid var(--card-line);
+  }
+  .seg button {
+    flex: 1; border: 0; background: transparent; color: var(--soft); border-radius: 9px; padding: 8px;
+    font-weight: 650; font-size: 14px;
+  }
+  .seg button.on { background: #2a395f; color: white; }
+  .term-note { color: var(--soft); font-size: 13px; margin: 8px 2px 0; line-height: 1.35; }
+
+  .gcard {
+    margin: 0 16px 12px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    text-align: left;
+    color: inherit;
+    width: calc(100% - 32px);
+    display: block;
+  }
+  .gcard.on { border-color: rgba(96, 165, 250, 0.7); background: #20294a; }
+  .gcard-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .title-line { display: flex; align-items: center; gap: 8px; }
+  .title-line h3 { font-size: 17px; font-weight: 600; }
+  .info {
+    width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #8ea0c8; background: transparent;
+    color: #c5d2ea; font-family: Georgia, serif; font-size: 12px; font-style: italic; line-height: 1;
+    display: grid; place-items: center; padding: 0;
+  }
+  .info:hover { border-color: white; color: white; }
+  .check {
+    width: 22px; height: 22px; border-radius: 6px; border: 2px solid #7e8dad; flex: none; display: grid; place-items: center;
+  }
+  .gcard.on .check { background: var(--blue); border-color: var(--blue); }
+  .gcard.on .check::after {
+    content: ""; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px, -1px);
+  }
+  .gcard-body { display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; }
+  .gicon {
+    width: 40px; height: 40px; border-radius: 50%; background: #1a305c; color: #5aa2ff;
+    display: grid; place-items: center; flex: none;
+  }
+  .gicon svg { width: 20px; height: 20px; }
+  .gcard-body p { margin: 8px 0 0; color: #d5dced; font-size: 15px; line-height: 1.35; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;
+    background: #2a334e; color: #d5dced; border-radius: 6px; padding: 3px 7px; font-size: 12px; font-weight: 650;
+  }
+  .badge.quick { background: #1d3b32; color: #b7f0d2; }
+
+  .sheet-back {
+    position: absolute; inset: 0; background: rgba(5, 8, 16, 0.55);
+    display: none; align-items: flex-end; z-index: 5;
+  }
+  .sheet-back.on { display: flex; }
+  .sheet {
+    width: 100%;
+    background: #f7f4ef;
+    color: var(--ink);
+    border-radius: 22px 22px 0 0;
+    padding: 10px 18px 18px;
+    max-height: 86%;
+    overflow: auto;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.35);
+  }
+  .handle { width: 40px; height: 4px; border-radius: 99px; background: #d9d0c4; margin: 4px auto 12px; }
+  .sheet .eye { color: var(--red-dark); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .sheet h3 { font-size: 24px; letter-spacing: -0.03em; margin: 4px 0 12px; }
+  .sheet h4 { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+  .sheet p { margin: 0; font-size: 16px; line-height: 1.45; }
+  .callout {
+    margin-top: 14px; background: white; border-radius: 12px; padding: 12px; border: 1px solid var(--line);
+  }
+  .callout strong { display: block; font-family: Outfit, sans-serif; font-size: 18px; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .callout span { color: var(--muted); font-size: 13.5px; line-height: 1.4; display: block; }
+
+  .plan-list { padding: 0 16px 8px; display: flex; flex-direction: column; gap: 10px; }
+  .plan-item { background: var(--card); border-radius: 14px; padding: 12px 14px; border: 1px solid var(--card-line); }
+  .plan-item h3 { font-size: 16px; }
+  .plan-item p { margin: 4px 0 0; color: var(--soft); font-size: 14px; line-height: 1.35; }
+  .amt { color: #93c5fd; font-family: Outfit, sans-serif; }
+  .total {
+    margin: 4px 16px 8px; padding: 12px 14px; border-radius: 14px; background: #13203f; border: 1px solid rgba(96,165,250,0.35);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .total b { font-family: Outfit, sans-serif; font-size: 22px; }
+
+  .toast {
+    position: absolute; left: 16px; right: 16px; bottom: 28px; background: #102418; color: #d1fae5;
+    border-radius: 12px; padding: 12px 14px; font-size: 14px; display: none; z-index: 4;
+  }
+  .toast.on { display: block; }
+
+  /* Proof panel */
+  .proof h2 { font-size: 28px; letter-spacing: -0.03em; }
+  .thesis { font-size: 18px; line-height: 1.45; margin: 8px 0 0; max-width: 62ch; }
+  .rule { width: 42px; height: 3px; background: var(--red); border: 0; margin: 16px 0; }
+
+  .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .num {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 14px 12px;
+  }
+  .num b {
+    display: block; font-family: Outfit, sans-serif; font-size: 28px; letter-spacing: -0.04em; line-height: 1;
+  }
+  .num span { display: block; margin-top: 6px; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
+
+  .section { margin-top: 26px; }
+  .section h3 { font-size: 18px; letter-spacing: -0.02em; }
+  .section .lead { color: var(--muted); margin: 4px 0 12px; font-size: 15px; line-height: 1.45; }
+
+  .bars { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 1fr 48px; gap: 10px; align-items: center; }
+  .bar-label { font-size: 14.5px; margin-bottom: 4px; }
+  .bar { height: 8px; background: #e4dcd0; border-radius: 99px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--red); border-radius: 99px; }
+  .bar-row em { font-style: normal; font-family: Outfit, sans-serif; font-weight: 650; text-align: right; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .math {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 14px;
+  }
+  .math .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red-dark); }
+  .math h4 { margin: 4px 0 8px; font-size: 16px; }
+  .math p { margin: 0 0 6px; font-size: 14px; line-height: 1.4; color: #3f3832; }
+  .math .result { color: var(--ok); font-weight: 700; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th, td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.35; }
+  th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  td:first-child { font-weight: 650; width: 28%; }
+
+  .scenario {
+    background: var(--navy); color: white; border-radius: 16px; padding: 16px 16px 14px; margin-top: 10px;
+  }
+  .scenario h4 { font-size: 16px; }
+  .scenario p { margin: 6px 0 0; color: #c9d3ea; font-size: 14.5px; line-height: 1.45; }
+  .scenario strong { color: white; }
+
+  .years {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .year { flex: 1; text-align: center; }
+  .year .col { height: 88px; display: flex; align-items: flex-end; }
+  .year i { display: block; width: 100%; background: #1d4f86; border-radius: 3px 3px 0 0; }
+  .year.dip i { background: #8aa4c4; }
+  .year.now i { background: var(--red); }
+  .year span { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
+  .year b { display: block; font-size: 10px; font-weight: 650; color: var(--ink); }
+
+  .scenes { display: flex; flex-direction: column; gap: 8px; }
+  .scene {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    align-items: start;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .scene em {
+    font-style: normal;
+    font-family: Outfit, sans-serif;
+    font-weight: 650;
+    color: var(--red-dark);
+    font-size: 14px;
+  }
+  .scene strong { display: block; font-size: 14.5px; }
+  .scene span { display: block; color: var(--muted); font-size: 13.5px; line-height: 1.35; margin-top: 2px; }
+
+  .note {
+    margin-top: 12px; font-size: 13.5px; color: var(--warn); background: #f8efd8; border-radius: 10px; padding: 10px 12px; line-height: 1.4;
+  }
+  details { margin-top: 18px; }
+  summary { cursor: pointer; font-weight: 700; }
+  details ol { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+  details li { margin: 0 0 8px; }
+  details a { color: var(--red-dark); }
+
+  @media (max-width: 980px) {
+    .stage { grid-template-columns: 1fr; }
+    .phone-col { position: static; display: flex; flex-direction: column; align-items: center; }
+    .top { flex-direction: column; align-items: flex-start; }
+    .meta { text-align: left; }
+    .grid2, .nums { grid-template-columns: 1fr; }
+    .wrap { padding: 20px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Capital <span>Kinnect</span></h1>
+          <p>One family card. Goals everyone can see.</p>
+        </div>
+      </div>
+      <div class="meta">
+        <strong>Business Challenge · McLean</strong>
+        Phone is the product. The panel uses the case’s own data artifacts.
+      </div>
+    </header>
+
+    <div class="stage">
+      <div class="phone-col">
+        <div class="phone">
+          <div class="screen" id="screen" data-role="adult">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons" aria-hidden="true">
+                <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><rect x="0" y="7" width="2.5" height="4" rx="0.5"/><rect x="4" y="5" width="2.5" height="6" rx="0.5"/><rect x="8" y="2.5" width="2.5" height="8.5" rx="0.5"/><rect x="12" y="0" width="2.5" height="11" rx="0.5"/></svg>
+                <span class="battery"><i></i></span>
+              </span>
+            </div>
+
+            <div class="views">
+              <section class="view on" id="view-home">
+                <div class="scroll">
+                  <div class="home-head">
+                    <div class="kicker">Household</div>
+                    <h2>Alvarez family</h2>
+                  </div>
+                  <div class="role" role="tablist" aria-label="Who is using the app">
+                    <button type="button" class="on" id="role-adult" role="tab" aria-selected="true">Alex &amp; Priya</button>
+                    <button type="button" id="role-teen" role="tab" aria-selected="false">Maya, 16</button>
+                  </div>
+
+                  <div class="cc adult-only">
+                    <div class="cc-top"><span>Capital Kinnect</span><span>Shared</span></div>
+                    <div class="chip" aria-hidden="true"></div>
+                    <div class="cc-num">•••• 4418</div>
+                    <div class="cc-foot"><span>Alvarez family</span><span>One line, four people</span></div>
+                  </div>
+                  <div class="cc teen-only">
+                    <div class="cc-top"><span>Your card</span><span>Maya</span></div>
+                    <div class="chip" aria-hidden="true"></div>
+                    <div class="teen-balance">$40 <small>left of $50</small></div>
+                    <div class="cc-foot"><span>Weekly limit set by Alex</span><span>You can see goals</span></div>
+                  </div>
+
+                  <div class="panel adult-only">
+                    <h3>Shared spend this month</h3>
+                    <p class="sub">$2,140 on the household card. Both adults see who spent it.</p>
+                    <div class="spend" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                    <div class="who">
+                      <i><span class="dot" style="background:#60a5fa"></span>Alex $820</i>
+                      <i><span class="dot" style="background:#f0b429"></span>Priya $1,180</i>
+                      <i><span class="dot" style="background:#34d399"></span>Maya $110</i>
+                      <i><span class="dot" style="background:#f472b6"></span>Sam $30</i>
+                    </div>
+                  </div>
+                  <div class="panel teen-only">
+                    <h3>What you can see</h3>
+                    <p class="sub">Family goals and your own spending. Adult purchases stay with Alex and Priya. You can still add money you earn.</p>
+                  </div>
+
+                  <div class="panel">
+                    <h3>Family goals</h3>
+                    <p class="sub adult-only">Progress both adults share. Kids see the bar, not the paychecks.</p>
+                    <p class="sub teen-only">You can chip in. The trip already includes $15 from babysitting.</p>
+                    <div class="goal-mini" id="home-goals"></div>
+                  </div>
+
+                  <div class="panel lesson">
+                    <div class="mark">i</div>
+                    <div>
+                      <h3>This week’s lesson · 2 min</h3>
+                      <p>Why the spring-break trip costs about $710 more if the family pays it off later.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="footer">
+                  <button class="primary" id="open-goals" type="button">Choose family goals</button>
+                  <div class="homebar" aria-hidden="true"></div>
+                </div>
+              </section>
+
+              <section class="view" id="view-goals">
+                <div class="appbar">
+                  <span></span>
+                  <h2>Choose your goals</h2>
+                  <button class="textbtn" id="cancel-goals" type="button">Cancel</button>
+                </div>
+                <div class="scroll">
+                  <div class="seg-wrap">
+                    <div class="seg" role="tablist" aria-label="Goal horizon">
+                      <button type="button" id="tab-short" role="tab">Short term</button>
+                      <button type="button" id="tab-long" class="on" role="tab">Long term</button>
+                    </div>
+                    <p class="term-note" id="term-note"></p>
+                  </div>
+                  <div id="goal-list"></div>
+                </div>
+                <div class="footer">
+                  <button class="primary" id="next-btn" type="button" disabled>Next</button>
+                  <div class="homebar" aria-hidden="true"></div>
+                </div>
+              </section>
+
+              <section class="view" id="view-plan">
+                <div class="appbar">
+                  <button class="textbtn" id="back-goals" type="button">Back</button>
+                  <h2>Family plan</h2>
+                  <span></span>
+                </div>
+                <div class="scroll">
+                  <div class="seg-wrap">
+                    <p class="term-note">Starting amounts for this sample family. Turn any of them down. The point is that both adults agree on one number.</p>
+                  </div>
+                  <div class="plan-list" id="plan-list"></div>
+                  <div class="total"><span>Suggested each month</span><b id="plan-total">$0</b></div>
+                </div>
+                <div class="footer">
+                  <button class="primary red" id="save-plan" type="button">Add to the family plan</button>
+                  <div class="homebar" aria-hidden="true"></div>
+                </div>
+              </section>
+            </div>
+
+            <div class="sheet-back" id="sheet-back">
+              <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+                <div class="handle"></div>
+                <div class="eye" id="sheet-eye"></div>
+                <h3 id="sheet-title"></h3>
+                <h4>In plain words</h4>
+                <p id="sheet-plain"></p>
+                <h4>A real-life example</h4>
+                <p id="sheet-story"></p>
+                <div class="callout">
+                  <strong id="sheet-stat"></strong>
+                  <span id="sheet-source"></span>
+                </div>
+                <div class="footer" style="padding:16px 0 4px">
+                  <button class="primary" id="sheet-close" type="button">Got it</button>
+                </div>
+              </div>
+            </div>
+            <div class="toast" id="toast" role="status"></div>
+          </div>
+        </div>
+        <p class="hint">Tap a goal, then the <b>(i)</b> beside its name. Switch to Maya to see what a teen is allowed to see on the same account.</p>
+      </div>
+
+      <section class="proof" id="proof">
+        <h2>One card for the money a family already shares.</h2>
+        <p class="thesis">A family does not spend like one person. Kinnect is one line, with a role for each person and a goal they can all see. The (i) explains that goal in plain words.</p>
+        <hr class="rule">
+
+        <div class="nums">
+          <div class="num"><b>$77,280</b><span>Average family spend in 2023. Case Data Artifact 5, U.S. Bureau of Labor Statistics.</span></div>
+          <div class="num"><b>+$26k</b><span>From about $51,000 in 2012 to $77,000 in 2023. That is a 51% rise. Artifact 4.</span></div>
+          <div class="num"><b>62%</b><span>Housing, transportation, and food. $48,000 of the $77,280. Shared bills, not personal splurges.</span></div>
+          <div class="num"><b>$4,000</b><span>Entertainment. About 5% of the household. Rewards that chase only fun miss the real spend.</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Artifact 4 · Family spending, 2012–2023</h3>
+          <p class="lead">It rose almost every year. 2020 was the only dip, from $63,000 to $61,000, and the climb started again the next year. More money is moving through the household, and the card is still built for one login.</p>
+          <div class="years" aria-label="Family spending by year in thousands of dollars">
+            <div class="year"><div class="col"><i style="height:66%"></i></div><span>’12</span><b>51</b></div>
+            <div class="year"><div class="col"><i style="height:66%"></i></div><span>’13</span><b>51</b></div>
+            <div class="year"><div class="col"><i style="height:69%"></i></div><span>’14</span><b>53</b></div>
+            <div class="year"><div class="col"><i style="height:73%"></i></div><span>’15</span><b>56</b></div>
+            <div class="year"><div class="col"><i style="height:74%"></i></div><span>’16</span><b>57</b></div>
+            <div class="year"><div class="col"><i style="height:78%"></i></div><span>’17</span><b>60</b></div>
+            <div class="year"><div class="col"><i style="height:79%"></i></div><span>’18</span><b>61</b></div>
+            <div class="year"><div class="col"><i style="height:82%"></i></div><span>’19</span><b>63</b></div>
+            <div class="year dip"><div class="col"><i style="height:79%"></i></div><span>’20</span><b>61</b></div>
+            <div class="year"><div class="col"><i style="height:87%"></i></div><span>’21</span><b>67</b></div>
+            <div class="year"><div class="col"><i style="height:95%"></i></div><span>’22</span><b>73</b></div>
+            <div class="year now"><div class="col"><i style="height:100%"></i></div><span>’23</span><b>77</b></div>
+          </div>
+          <p class="lead">Thousands of dollars. Source: U.S. Bureau of Labor Statistics, as given in the case.</p>
+        </div>
+
+        <div class="section">
+          <h3>Artifact 5 · Where the $77,280 goes</h3>
+          <p class="lead">Housing, transportation, and food are $48,000. That is the money both adults need to see. Entertainment is the short bar.</p>
+          <div class="bars">
+            <div class="bar-row"><div><div class="bar-label">Housing</div><div class="bar"><i style="width:100%"></i></div></div><em>$25k</em></div>
+            <div class="bar-row"><div><div class="bar-label">Other</div><div class="bar"><i style="width:60%"></i></div></div><em>$15k</em></div>
+            <div class="bar-row"><div><div class="bar-label">Transportation</div><div class="bar"><i style="width:52%"></i></div></div><em>$13k</em></div>
+            <div class="bar-row"><div><div class="bar-label">Food</div><div class="bar"><i style="width:40%"></i></div></div><em>$10k</em></div>
+            <div class="bar-row"><div><div class="bar-label">Insurance</div><div class="bar"><i style="width:40%"></i></div></div><em>$10k</em></div>
+            <div class="bar-row"><div><div class="bar-label">Entertainment</div><div class="bar"><i style="width:16%"></i></div></div><em>$4k</em></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Artifact 1 · Five family moments, one product</h3>
+          <p class="lead">The case lists five scenes. We did not build five features. The same shared line covers each one, because the person changes and the card does not.</p>
+          <div class="scenes">
+            <div class="scene"><em>01</em><div><strong>Managing money with a spouse</strong><span>Alex and Priya both see the $2,140 on the household card, and who spent it. Shared balance, not two private ones.</span></div></div>
+            <div class="scene"><em>02</em><div><strong>A child’s emergency card</strong><span>Maya’s card is the same line, with a $50 weekly cap set by Alex. Enough for a ride home. Not enough to surprise the household.</span></div></div>
+            <div class="scene"><em>03</em><div><strong>A teenager building credit</strong><span>Switch to Maya. She sees goals, her own spending, and a two-minute lesson. She does not see adult purchases.</span></div></div>
+            <div class="scene"><em>04</em><div><strong>An older relative</strong><span>The caregiving goal is a named pot both adults watch, so help for a parent does not hide on one card.</span></div></div>
+            <div class="scene"><em>05</em><div><strong>A big project, like a renovation</strong><span>Home and major purchase are goals with a date. The family fills them before the swipe, instead of discovering the bill later.</span></div></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>The story, in one household</h3>
+          <p class="lead">Entertainment is $4,000 a year. A trip is a slice of that. If the Alvarez family puts a $2,867 vacation on the card and takes 24 months to pay it at 22.25%, the interest is about $710. Saving $240 a month pays for the trip before they leave. That is the short-term goal on the phone. The (i) says this in the same words to a parent and to Maya.</p>
+          <p class="note">The $77,280 and the year chart are the case artifacts. The $710 is our math on a sample trip, using the Federal Reserve’s May 2025 rate for cards that are being charged interest. It is an illustration, not a measured pilot.</p>
+        </div>
+
+        <details>
+          <summary>How we read the artifacts, and the outside numbers</summary>
+          <ol>
+            <li>Case Data Artifact 4, U.S. Bureau of Labor Statistics. Family spending by year, in thousands: 2012 and 2013 $51, 2014 $53, 2015 $56, 2016 $57, 2017 $60, 2018 $61, 2019 $63, 2020 $61, 2021 $67, 2022 $73, 2023 $77. Rise from $51,000 to $77,000 is $26,000, or 51%.</li>
+            <li>Case Data Artifact 5, U.S. Bureau of Labor Statistics, 2023. Average annual spend $77,280. Housing $25,000, other $15,000, transportation $13,000, food $10,000, insurance $10,000, entertainment $4,000. Those six figures sum to $77,000. Housing + transportation + food = $48,000, which is 62% of $77,280. Entertainment is 5%.</li>
+            <li>Case Data Artifact 1. The five scenes above are the ones printed in the packet. Kinnect answers them with roles on one line, not with a separate product for each scene.</li>
+            <li>Outside the packet, only where a goal needs a concrete example. A $2,867 vacation is Allianz via Investopedia, 2025. Interest uses payment = P · r(1+r)^n / ((1+r)^n − 1), P = 2,867, r = 0.2225/12, n = 24. Payment is about $149. Interest is about $711. The 22.25% rate is Federal Reserve G.19, May 2025, accounts assessed interest.</li>
+          </ol>
+        </details>
+      </section>
+    </div>
+  </div>
+
+<script>
+const GOALS = [
+  {
+    id: "retirement", term: "long", name: "Retirement",
+    blurb: "Plan for the retirement you want, together.",
+    badge: "Recommended",
+    monthly: 400,
+    pot: 323000,
+    icon: "chair",
+    plain: "Retirement is the money you live on after you stop working. This goal lets both adults save for that together. Kids can see that the family is planning ahead. They cannot see paychecks.",
+    story: "Alex and Priya are 38. Each payday, each of them moves $200 into this goal. That is $400 a month. Maya, 16, can open the app and watch the bar move. She learns that future Alex and Priya is a bill the family pays on purpose, the same way it pays for groceries.",
+    stat: "About $323,000 if they keep going for 27 years.",
+    source: "Illustration only: $400 a month at a 6% yearly return. Not a promise. The product win is that both adults see the same number."
+  },
+  {
+    id: "education", term: "long", name: "Education",
+    blurb: "Cover school costs for a child, or for yourselves.",
+    monthly: 300,
+    pot: 115000,
+    icon: "cap",
+    plain: "This pot pays for school. College, trade school, or classes for a parent. Anyone in the family can be the reason.",
+    story: "Four years of college for one child costs about $115,000. If a family puts in $300 a month from the year a child is born, and the money grows at 6% a year, it reaches about $116,000 by age 18. Maya can watch her own goal. Sam, age 10, can see that school has a price and that the family is already paying it.",
+    stat: "About $115,000 for one child’s college.",
+    source: "Investopedia’s 2025 estimate, from a two-child total of $230,273 using federal cost-of-attendance figures. The $116,000 is $300 a month for 18 years at 6%."
+  },
+  {
+    id: "home", term: "long", name: "Home",
+    blurb: "Buy a home, or pay for a big repair on this one.",
+    monthly: 500,
+    pot: 83000,
+    icon: "house",
+    plain: "This is money for a house. A down payment, or a big repair on the home you already live in. It stays separate from groceries, so the two do not get mixed together.",
+    story: "A typical U.S. home sells for about $415,000. Twenty percent down is about $83,000. The family puts $500 a month here. At a 4% yearly return, that reaches about $83,000 in 11 years. When the water heater dies, that repair can sit in this goal too, instead of quietly landing on the card.",
+    stat: "$83,000 is 20% down on a $415,000 home.",
+    source: "2025 median existing single-family price used by Investopedia, from the National Association of Realtors. The 11-year path is $500 a month at 4%."
+  },
+  {
+    id: "caregiving", term: "long", name: "Caregiving",
+    blurb: "Provide care for parents and other loved ones.",
+    monthly: 600,
+    pot: 7200,
+    icon: "people",
+    plain: "This is money to take care of someone you love. Rides to the doctor, medicine, and help at home. It keeps those costs from landing on just one person’s card.",
+    story: "Priya’s dad needs rides and a few hours of help each week. Family caregivers spend about $7,200 a year of their own money. Nearly half say caregiving has already hurt their finances. A $600 monthly goal covers a typical year, and both adults can see every dollar. Nobody has to guess what the other person paid.",
+    stat: "63 million Americans were caregivers in 2025.",
+    source: "AARP and the National Alliance for Caregiving. About 1 in 3 caregivers are also raising kids. The $7,200 is AARP’s out-of-pocket figure (measured at $7,242 in 2021)."
+  },
+  {
+    id: "travel", term: "short", name: "Travel",
+    blurb: "Set aside money for that big trip.",
+    badge: "Quick win",
+    monthly: 240,
+    pot: 2867,
+    icon: "plane",
+    plain: "This is a jar for a trip. You fill the jar before you leave. Then the vacation does not turn into debt after you get home.",
+    story: "A typical household vacation costs $2,867. The family moves $240 a month. In 12 months they have about $2,880, and the trip is paid for. If they put that same $2,867 on a card and take 24 months to pay it off, the interest is about $710. Maya adds $15 from babysitting and can see her $15 in the bar.",
+    stat: "About $710 of interest the family does not pay.",
+    source: "Vacation cost: Allianz, via Investopedia 2025. Interest: $2,867 at 22.25% APR for 24 months. That rate is the Federal Reserve’s May 2025 figure for credit cards that are being charged interest."
+  },
+  {
+    id: "purchase", term: "short", name: "Major purchase",
+    blurb: "Make a significant one-time purchase.",
+    monthly: 150,
+    pot: 1800,
+    icon: "tag",
+    plain: "One big thing the family needs soon. A used car, a fridge, a laptop for school. You name the date and save toward it, instead of swiping the day it breaks.",
+    story: "The fridge dies in November and costs $1,800. The old pattern is a fight, then a balance that sits on the card. Here, the family started a $150 monthly goal back in January. By the time the fridge dies, the money is already there, and both adults agreed to it in the app.",
+    stat: "$1,800 is $150 a month for a year.",
+    source: "No interest, because the purchase waits for the goal. The example price is a sample, not a national average."
+  },
+  {
+    id: "gifts", term: "short", name: "Gifts and donations",
+    blurb: "Give to loved ones and favorite causes.",
+    monthly: 100,
+    pot: 1200,
+    icon: "gift",
+    plain: "Money for birthdays, holidays, and causes you care about. Giving stays in the plan, so January is not a shock.",
+    story: "The family wants $1,200 for December gifts and a donation Maya picks. That is $100 a month starting in January. Sam helps choose the gift for his grandparent. The card does not get a surprise $1,200 in one week, and both adults watched the pot fill.",
+    stat: "$100 a month is $1,200 by December.",
+    source: "The spending still happens. It stops being a surprise on one person’s card."
+  },
+  {
+    id: "custom", term: "short", name: "Custom",
+    blurb: "Set aside money for any other family goal.",
+    monthly: 200,
+    pot: 2400,
+    icon: "trophy",
+    plain: "Any family goal that is not on this list. You name it, pick an amount, and pick a date. Everyone on the account can see it.",
+    story: "The Alvarez family names theirs Rainy Week. They want $2,400 set aside, about three weeks of groceries and gas. They put in $200 a month. Both adults have to agree before anyone spends it. The kids can see that the family has a backup, without seeing every bill.",
+    stat: "$200 a month reaches $2,400 in a year.",
+    source: "The rule is the product: both adults say yes before that money is spent."
+  }
+];
+
+const ICONS = {
+  chair: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M5 10h14v5H5z"/><path d="M7 15v5M17 15v5"/></svg>',
+  cap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10 12 5l10 5-10 5L2 10z"/><path d="M6 12v4.5c1.6 1.4 3.6 2 6 2s4.4-.6 6-2V12"/><path d="M22 10v6"/></svg>',
+  house: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M7 10.8V20h10v-9.2"/></svg>',
+  people: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="2.2"/><circle cx="16" cy="9" r="1.8"/><path d="M4.8 18c.4-2.4 2.2-3.6 4.2-3.6S12.8 15.6 13.2 18"/><path d="M14 14.6c1.3-.3 2.6.2 3.3 1.6"/></svg>',
+  plane: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12.5 21 4l-6.2 16-2.3-6.2L3 12.5z"/></svg>',
+  tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5v7l9.2 9.2a2 2 0 0 0 2.8 0l4.2-4.2a2 2 0 0 0 0-2.8L12 3z"/><circle cx="8.2" cy="8.2" r="1"/></svg>',
+  gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M4 14h16M12 10v10"/><path d="M12 10c-2 0-3.5-2.2-2.4-3.6C10.4 5.4 12 7.2 12 10zM12 10c2 0 3.5-2.2 2.4-3.6C13.6 5.4 12 7.2 12 10z"/></svg>',
+  trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 9.2M16 6h2.5A2.5 2.5 0 0 1 16 9.2"/><path d="M12 13v3M9 20h6M10 17h4"/></svg>'
+};
+
+const money = (n) => "$" + n.toLocaleString("en-US");
+
+const state = {
+  screen: "home",
+  term: "long",
+  selected: new Set(),
+  role: "adult"
+};
+
+const homeGoals = [
+  { id: "travel", name: "Spring break", saved: 1780, target: 2867, note: "Maya added $15" },
+  { id: "education", name: "Maya’s college", saved: 18400, target: 115000, note: "Long term" }
+];
+
+function $(id) { return document.getElementById(id); }
+
+function show(screen) {
+  state.screen = screen;
+  document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
+  $("view-" + screen).classList.add("on");
+  closeSheet();
+}
+
+function renderHome() {
+  const teen = state.role === "teen";
+  $("home-goals").innerHTML = homeGoals.map((g) => {
+    const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
+    const dollars = teen && g.id === "education"
+      ? "On track · long-term family goal"
+      : money(g.saved) + " of " + money(g.target);
+    return `<div>
+      <div class="row"><b>${g.name}</b><span>${dollars}</span></div>
+      <div class="track"><i style="width:${pct}%"></i></div>
+      <div class="sub" style="margin:4px 0 0">${g.fresh ? '<span class="fresh">Just added · </span>' : ""}${g.note || ""}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderGoals() {
+  const list = GOALS.filter((g) => g.term === state.term);
+  $("term-note").textContent = state.term === "short"
+    ? "Things this family will pay for in the next year or two. Fill the goal before you spend."
+    : "Things that take years. Both adults should still be able to see them. Kids see the progress, not the pay.";
+  $("tab-short").classList.toggle("on", state.term === "short");
+  $("tab-long").classList.toggle("on", state.term === "long");
+  $("goal-list").innerHTML = list.map((g) => {
+    const on = state.selected.has(g.id);
+    const badge = g.badge
+      ? `<div class="badge ${g.badge === "Quick win" ? "quick" : ""}">${g.badge === "Recommended" ? "★ " : ""}${g.badge}</div>`
+      : "";
+    return `<button class="gcard ${on ? "on" : ""}" type="button" data-id="${g.id}">
+      <div class="gcard-top">
+        <div class="title-line">
+          <h3>${g.name}</h3>
+          <span class="info" data-info="${g.id}" role="button" tabindex="0" aria-label="Explain ${g.name}">i</span>
+        </div>
+        <span class="check" aria-hidden="true"></span>
+      </div>
+      <div class="gcard-body">
+        <span class="gicon">${ICONS[g.icon]}</span>
+        <div><p>${g.blurb}</p>${badge}</div>
+      </div>
+    </button>`;
+  }).join("");
+  const n = state.selected.size;
+  const next = $("next-btn");
+  next.disabled = n === 0;
+  next.textContent = n === 0 ? "Next" : `Next · ${n} goal${n > 1 ? "s" : ""}`;
+}
+
+function renderPlan() {
+  const chosen = GOALS.filter((g) => state.selected.has(g.id));
+  $("plan-list").innerHTML = chosen.map((g) => {
+    const already = homeGoals.some((h) => h.id === g.id);
+    return `<article class="plan-item">
+      <h3>${g.name} <span class="amt">${money(g.monthly)}/mo</span></h3>
+      <p>${already ? "Already on the family plan. " : ""}${g.stat}</p>
+    </article>`;
+  }).join("");
+  const total = chosen.reduce((s, g) => s + g.monthly, 0);
+  $("plan-total").textContent = money(total);
+}
+
+function openSheet(id) {
+  const g = GOALS.find((x) => x.id === id);
+  $("sheet-eye").textContent = g.term === "long" ? "Long term" : "Short term";
+  $("sheet-title").textContent = g.name;
+  $("sheet-plain").textContent = g.plain;
+  $("sheet-story").textContent = g.story;
+  $("sheet-stat").textContent = g.stat;
+  $("sheet-source").textContent = g.source;
+  $("sheet-back").classList.add("on");
+}
+
+function closeSheet() { $("sheet-back").classList.remove("on"); }
+
+$("goal-list").addEventListener("click", (e) => {
+  const info = e.target.closest("[data-info]");
+  if (info) {
+    e.stopPropagation();
+    e.preventDefault();
+    openSheet(info.dataset.info);
+    return;
+  }
+  const card = e.target.closest(".gcard");
+  if (!card) return;
+  const id = card.dataset.id;
+  if (state.selected.has(id)) state.selected.delete(id);
+  else state.selected.add(id);
+  renderGoals();
+});
+
+$("goal-list").addEventListener("keydown", (e) => {
+  const info = e.target.closest("[data-info]");
+  if (!info) return;
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    e.stopPropagation();
+    openSheet(info.dataset.info);
+  }
+});
+
+$("tab-short").onclick = () => { state.term = "short"; renderGoals(); };
+$("tab-long").onclick = () => { state.term = "long"; renderGoals(); };
+$("open-goals").onclick = () => { show("goals"); renderGoals(); };
+$("cancel-goals").onclick = () => show("home");
+$("back-goals").onclick = () => show("goals");
+$("next-btn").onclick = () => { if (!state.selected.size) return; renderPlan(); show("plan"); };
+$("sheet-close").onclick = closeSheet;
+$("sheet-back").addEventListener("click", (e) => { if (e.target.id === "sheet-back") closeSheet(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+function setRole(role) {
+  state.role = role;
+  $("screen").dataset.role = role;
+  $("role-adult").classList.toggle("on", role === "adult");
+  $("role-teen").classList.toggle("on", role === "teen");
+  $("role-adult").setAttribute("aria-selected", role === "adult");
+  $("role-teen").setAttribute("aria-selected", role === "teen");
+  renderHome();
+}
+$("role-adult").onclick = () => setRole("adult");
+$("role-teen").onclick = () => setRole("teen");
+
+$("save-plan").onclick = () => {
+  const justAdded = [];
+  GOALS.filter((g) => state.selected.has(g.id)).forEach((g) => {
+    if (homeGoals.some((h) => h.id === g.id)) return;
+    justAdded.push(g.name);
+    homeGoals.push({
+      id: g.id,
+      name: g.name,
+      saved: 0,
+      target: g.pot,
+      note: money(g.monthly) + " a month, just agreed",
+      fresh: true
+    });
+  });
+  state.selected.clear();
+  show("home");
+  renderHome();
+  const toast = $("toast");
+  toast.textContent = justAdded.length
+    ? "Added " + justAdded.join(" and ") + ". Both adults can see it. Maya can see the progress."
+    : "Those goals were already on the family plan.";
+  toast.classList.add("on");
+  setTimeout(() => toast.classList.remove("on"), 2800);
+};
+
+renderHome();
+renderGoals();
+</script>
+</body>
+</html>
